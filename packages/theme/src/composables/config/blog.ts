@@ -12,7 +12,7 @@ import {
 } from 'vue'
 import type { Theme } from './index'
 
-const configSymbol: InjectionKey<Ref<Theme.Config>> = Symbol('theme-config')
+const configSymbol = 'theme-config'
 
 export function withConfigProvider(App: Component) {
     return defineComponent({

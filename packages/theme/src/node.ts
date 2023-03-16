@@ -6,7 +6,7 @@ import type { UserConfig } from 'vitepress'
 import type { Theme } from './composables/config/index'
 
 export function getThemeConfig(cfg?: Partial<Theme.BlogConfig>) {
-  const srcDir = cfg?.srcDir ||  '.'
+  const srcDir = cfg?.srcDir || process.argv.slice(2)?.[1] || '.'
   const files = glob.sync(`${srcDir}/**/*.md`, { ignore: ['node_modules'] })
 
   const data = files
