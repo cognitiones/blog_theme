@@ -1,0 +1,42 @@
+{
+  "name": "@99_water/theme",
+  "version": "0.2.0",
+  "description": "a vitepress theme",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "vitepress dev demo",
+    "dev:lib": "npm run build:node && vitepress dev demo",
+    "build": "npm run build:node && npm run build:docs",
+    "build:docs": "vitepress build demo",
+    "build:node": "npx tsup src/node.ts --dts --out-dir=./",
+    "serve": "npm run build && vitepress serve demo"
+  },
+  "files": [
+    "src",
+    "types",
+    "node.js",
+    "node.d.ts"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vueuse/core": "^9.13.0",
+    "fast-glob": "^3.2.12",
+    "gray-matter": "^4.0.3"
+  },
+  "devDependencies": {
+    "sass": "^1.59.3",
+    "tsup": "^6.6.3",
+    "typescript": "^4.9.5",
+    "vitepress": "1.0.0-alpha.60",
+    "vue": "^3.2.47"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "@algolia/client-search"
+      ]
+    }
+  }
+}
