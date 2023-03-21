@@ -14,7 +14,7 @@ import BlogTags from './blog-tags.vue';
 <style lang="scss" scoped>
     .info{
         width: 100%;
-        max-width: 240px;
+        // max-width: 240px;
     }
 </style>
 

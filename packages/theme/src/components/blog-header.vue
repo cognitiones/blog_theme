@@ -18,9 +18,19 @@ const name = computed(
 </template>
 
 <style lang="scss" scoped>
-    .name{
-        text-align: center;
-        font-size: 25px;
-        padding: 60px 0;
-    }
+.name {
+    background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    text-align: center;
+    padding: 60px 0;
+
+    font-size: 60px;
+    line-height: 1.25;
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    max-width: 960px;
+}
 </style>

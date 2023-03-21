@@ -1,19 +1,48 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, onMounted } from 'vue'
-import { useArticles } from '../composables/config/blog.ts';
+import { useRouter } from 'vitepress'
+import { useActiveTag, useArticles } from '../composables/config/blog';
 
 const docs = useArticles();
+const activeTag = useActiveTag()
+const router = useRouter()
 const tags = computed(() => {
     return [...new Set(docs.value.map((v) => v.meta.tags || []).flat(3))]
+})
+
+const handleClick = (item: string) => {    
+    if (item === activeTag.value) {
+        handleCloseTag()
+        return
+    }
+    activeTag.value = item
+    router.go(
+        `${window.location.origin}${router.route.path}?tag=${item}`
+    )
+}
+
+const handleCloseTag = () => {
+    activeTag.value = ''
+    router.go(`${window.location.origin}${router.route.path}`)
+}
+
+onMounted(() => {
+  const url = new URL(window.location.href)
+  activeTag.value = url.searchParams.get('tag') || ''
 })
 
 </script>
 
 <template>
     <div class="tags-wrapper">
-        <div class="title">标签</div>
+        <div class="title">
+            <span>标签</span>
+            <div class="tags-list clear" v-if="activeTag">
+                <span class="tags clear" @click="handleCloseTag()">{{ activeTag }}</span>
+            </div>    
+        </div>
         <div class="tags-list">
-            <span class="tags" v-for="item in tags" :key="item">
+            <span @click="handleClick(item)" class="tags" v-for="item in tags" :key="item">
                 {{ item }}
             </span>
         </div>
@@ -32,8 +61,17 @@ const tags = computed(() => {
     }
 }
 
+.clear{
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
 .title {
+    width: 100%;
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .tags-list {
@@ -42,9 +80,15 @@ const tags = computed(() => {
     margin-top: 10px;
 }
 
+.tags-title{
+
+}
+
 .tags {
-    color: rgb(0, 254, 233);
-    background-color: rgb(10, 137, 215);
+    min-width: 40px;
+    text-align: center;
+    color: #fff;
+    background-color: #79bbff;
     border-radius: 0.25rem;
     margin: 0 10px 10px 0;
     padding: 2px 5px;

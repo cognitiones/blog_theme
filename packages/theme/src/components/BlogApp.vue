@@ -55,9 +55,27 @@ const { Layout } = Theme
 }
 
 .blog-info-wrapper {
-    flex-shrink: 0;
-    margin-left: 16px;
-    position: sticky;
-    top: 100px;
+  margin-left: 16px;
+  position: sticky;
+  top: 100px;
+}
+
+@media screen and (max-width: 959px) {
+    .blog-info-wrapper {
+        margin-left: 16px;
+        position: sticky;
+        top: 40px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .content-wrapper {
+        flex-wrap: wrap;
+    }
+
+    .blog-info-wrapper {
+        margin: 20px 0;
+        width: 100%;
+    }
 }
 </style>
