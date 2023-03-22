@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@99_water/theme": "^0.2.1",
+    "@99_water/theme": "^0.2.3",
     "vue": "^3.2.47"
   },
   "devDependencies": {
