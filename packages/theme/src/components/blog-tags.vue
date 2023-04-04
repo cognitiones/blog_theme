@@ -38,7 +38,10 @@ onMounted(() => {
         <div class="title">
             <span>标签</span>
             <div class="tags-list clear" v-if="activeTag">
-                <span class="tags clear" @click="handleCloseTag()">{{ activeTag }}</span>
+                <span class="tags flex clear" @click="handleCloseTag()">
+                    {{ activeTag }}
+                    <img src="http://cdn.chen-zeqi.cn/x%20(2).svg" alt="">
+                </span>
             </div>    
         </div>
         <div class="tags-list">
@@ -50,6 +53,16 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
+.flex{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.tags:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.2);
+}
+
 .tags-wrapper {
     padding: 10px 10px 3px 10px;
     background-color: rgba(var(--bg-gradient));
@@ -62,7 +75,6 @@ onMounted(() => {
 }
 
 .clear{
-    padding: 0 !important;
     margin: 0 !important;
 }
 
@@ -80,10 +92,6 @@ onMounted(() => {
     margin-top: 10px;
 }
 
-.tags-title{
-
-}
-
 .tags {
     min-width: 40px;
     text-align: center;
@@ -91,7 +99,7 @@ onMounted(() => {
     background-color: #79bbff;
     border-radius: 0.25rem;
     margin: 0 10px 10px 0;
-    padding: 2px 5px;
+    padding: 2px 8px;
     font-size: 14px;
 }
 </style>

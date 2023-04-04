@@ -27,7 +27,7 @@ export default defineConfig({
   description: '粥里有勺糖的博客主题，基于 vitepress 实现',
   vite: {
     optimizeDeps: {
-      include: ['element-plus'],
+      // include: ['element-plus'],
       exclude: ['@sugarat/theme']
     }
   },

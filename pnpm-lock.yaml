@@ -5,9 +5,24 @@ importers:
   .:
     specifiers: {}
 
+  packages/blog:
+    specifiers:
+      '@99_water/module': ^1.0.1
+      '@99_water/theme': workspace:^0.2.4
+      sass: ^1.58.3
+      vitepress: 1.0.0-alpha.49
+      vue: ^3.2.47
+    dependencies:
+      '@99_water/module': 1.0.1
+      '@99_water/theme': link:../theme
+      vue: 3.2.47
+    devDependencies:
+      sass: 1.59.3
+      vitepress: 1.0.0-alpha.49_sass@1.59.3
+
   packages/template:
     specifiers:
-      '@99_water/theme': ^0.2.0
+      '@99_water/theme': ^0.2.3
       sass: ^1.59.3
       typescript: ^4.9.5
       vitepress: 1.0.0-alpha.60
@@ -42,6 +57,10 @@ importers:
       vue: 3.2.47
 
 packages:
+
+  /@99_water/module/1.0.1:
+    resolution: {integrity: sha512-BWaCw58MNiYrDNdb5F1zCJdOgYo2R9W7E3HlRYNuq2FNs9zVkuhAJCnm8mJBfbRE7qSdRd8Yd6WUev7WcqB/lA==}
+    dev: false
 
   /@algolia/autocomplete-core/1.7.4:
     resolution: {integrity: sha512-daoLpQ3ps/VTMRZDEBfU8ixXd+amZcNJ4QSP3IERGyzqnL5Ch8uSRFt/4G8pUvW9c3o6GA4vtVv4I4lmnkdXyg==}
@@ -1562,6 +1581,33 @@ packages:
       sass: 1.59.3
     optionalDependencies:
       fsevents: 2.3.2
+    dev: true
+
+  /vitepress/1.0.0-alpha.49_sass@1.59.3:
+    resolution: {integrity: sha512-3nUZJow4qL8NHRWYatqqVj45AJDxWst/TuOj+IbQRhxesEswa+Fpwayj9/FxzRzBl665fuiG5y+QeVhOeUm0OA==}
+    hasBin: true
+    dependencies:
+      '@docsearch/css': 3.3.3
+      '@docsearch/js': 3.3.3
+      '@vitejs/plugin-vue': 4.0.0_vite@4.1.4+vue@3.2.47
+      '@vue/devtools-api': 6.5.0
+      '@vueuse/core': 9.13.0_vue@3.2.47
+      body-scroll-lock: 4.0.0-beta.0
+      shiki: 0.14.1
+      vite: 4.1.4_sass@1.59.3
+      vue: 3.2.47
+    transitivePeerDependencies:
+      - '@algolia/client-search'
+      - '@types/node'
+      - '@types/react'
+      - '@vue/composition-api'
+      - less
+      - react
+      - react-dom
+      - sass
+      - stylus
+      - sugarss
+      - terser
     dev: true
 
   /vitepress/1.0.0-alpha.60_sass@1.59.3:
