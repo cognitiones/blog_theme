@@ -5,13 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:blog": "vitepress build packages/blog/docs && cp -r ./packages/blog/docs/.vitepress/dist ./"
+    "build:blog": "pnpm --filter blog docs:build && cp -r ./packages/blog/docs/.vitepress/dist ./"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@99_water/theme": "workspace:^0.2.4",
-    "vitepress": "1.0.0-alpha.65"
+    "vue": "^3.2.47"
+  },
+  "devDependencies": {
+    "sass": "^1.58.3",
+    "vitepress": "1.0.0-alpha.49"
   }
 }
