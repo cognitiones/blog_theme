@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:blog": "vitepress build packages/blog/docs && cp packages/blog/docs/.vitepress/dist ./"
+    "build:blog": "vitepress build packages/blog/docs && cp ./packages/blog/docs/.vitepress/dist ./"
   },
   "keywords": [],
   "author": "",
