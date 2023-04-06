@@ -4,9 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:blog": "vitepress build packages/blog/docs && mv packages/blog/docs/.vitepress/dist ./"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@99_water/theme": "workspace:^0.2.4",
+    "vitepress": "1.0.0-alpha.65"
+  }
 }
