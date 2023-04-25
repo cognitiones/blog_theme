@@ -1,13 +1,11 @@
 ---
 title: "class 类"
+cover: "http://cdn.chen-zeqi.cn/class%E7%B1%BB.png"
 tags: 
   - class
 ---
 
 # Class 类
-<water-button>11</water-button>
-<icon></icon>
-<water-mirror></water-mirror>
 
 类的数据类型就是函数，类本身就指向构造函数。
 

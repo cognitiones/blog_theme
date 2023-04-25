@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "pnpm --filter blog docs:dev",
     "build:blog": "pnpm --filter blog docs:build && cp -r ./packages/blog/docs/.vitepress/dist ./"
   },
   "keywords": [],
