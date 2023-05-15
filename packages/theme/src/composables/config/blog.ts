@@ -46,6 +46,7 @@ export function useActiveTag() {
 export function useArticles() {
     const blogConfig = useConfig()
     const articles = computed(() => blogConfig.config?.blog?.pagesData || [])
+
     return articles
 }
 

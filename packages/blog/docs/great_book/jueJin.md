@@ -14,6 +14,7 @@ hidden: true
     ]
 
     const handleClick = (item) => {
+        if(!item.shareUrl) return
         window.open(item.shareUrl)
     }
 </script>

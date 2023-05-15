@@ -2,7 +2,7 @@ export default function sidebar() {
     return {
         '/great_book/': great_book(),
         // '/sum_up/': sum_up(),
-        '/others/': others(),
+        // '/others/': others(),
     }
 }
 
@@ -13,7 +13,7 @@ function great_book() {
             // text: '好书推荐',
             items: [
                 { text: '掘金小册', link: '/great_book/jueJin' },
-                // { text: '实体书', link: '/great_book/book' }
+                { text: '实体书', link: '/great_book/book' }
             ]
         }
     ]

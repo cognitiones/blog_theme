@@ -56,6 +56,8 @@ importers:
         specifier: 1.0.0-alpha.60
         version: 1.0.0-alpha.60(@algolia/client-search@4.15.0)(sass@1.59.3)
 
+  packages/test: {}
+
   packages/theme:
     dependencies:
       '@vueuse/core':

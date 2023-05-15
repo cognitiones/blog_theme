@@ -2,12 +2,16 @@
 const props = defineProps({
     route: String,
     title: String,
-    cover: String
+    cover: String,
+    description: String,
+    top: Number
 })
 </script>
 
 <template>
     <a class="blogItem" :href="route">
+        <div v-if="top" class="blogItem__top" />
+        
         <div class="blogItem__title">{{ title }}</div>
         <img v-if="cover" class="blogItem__img" :src="cover" alt="">
     </a>
@@ -15,6 +19,8 @@ const props = defineProps({
 
 <style lang="scss">
 .blogItem {
+    position: relative;
+
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -37,6 +43,20 @@ const props = defineProps({
     &__img {
         width: 120px;
         height: 80px;
+    }
+
+    &__top {
+        position: absolute;
+        top: -2px;
+        left: -8px;
+
+        width: 0;
+        height: 0;
+        border-top: 12px solid skyblue;
+        border-right: 12px solid transparent;
+        border-left: 12px solid transparent;
+
+        transform: rotate(135deg);
     }
 }
 </style>
