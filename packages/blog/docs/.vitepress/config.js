@@ -32,7 +32,7 @@ export default defineConfig({
         cleanUrls: 'with-subfolders',
         //导航栏索引
         nav: [
-            { text: '好文总结', link: '/others/tool' },
+            { text: '工具推荐', link: '/others/tool' },
             { text: '好书推荐', link: '/great_book/jueJin' },
         ],
         //侧栏

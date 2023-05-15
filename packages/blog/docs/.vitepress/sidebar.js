@@ -3,6 +3,7 @@ export default function sidebar() {
         '/great_book/': great_book(),
         // '/sum_up/': sum_up(),
         // '/others/': others(),
+        '/func': func(),
     }
 }
 
@@ -42,6 +43,21 @@ function others() {
                 { text: '工具分享', link: '/others/tool' },
                 { text: '前端组件', link: '/others/module' },
                 // { text: 'Promise', link: '/others/promise' }
+            ]
+        }
+    ]
+}
+
+function func() {
+    return [
+        {
+            text: "函数式编程",
+            items: [
+                { text: '01 命令式与声明式', link: '/func/01' },
+                { text: '02 DRY 原则', link: '/func/02' },
+                { text: '03 链式调用', link: '/func/03' },
+                { text: '04 compose/pipe', link: '/func/04' },
+                { text: '05 curry', link: '/func/05' },
             ]
         }
     ]
