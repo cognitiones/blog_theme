@@ -58,6 +58,11 @@ function func() {
                 { text: '03 链式调用', link: '/func/03' },
                 { text: '04 compose/pipe', link: '/func/04' },
                 { text: '05 curry', link: '/func/05' },
+                { text: '06 Identity/Maybe Functor', link: '/func/06' },
+                { text: '07 Monad', link: '/func/07' },
+                { text: '08 Semigroup', link: '/func/08' },
+                { text: '09 推导 foldMap() 函数', link: '/func/09' },
+                { text: '10 范畴论实战', link: '/func/10' },
             ]
         }
     ]
