@@ -1,3 +1,11 @@
+/*
+ * @Author: chenzeqi chenzeqi@jiayuan.com
+ * @Date: 2023-05-15 10:00:56
+ * @LastEditors: chenzeqi chenzeqi@jiayuan.com
+ * @LastEditTime: 2023-06-07 18:46:26
+ * @FilePath: \blog_theme\packages\blog\docs\.vitepress\sidebar.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 export default function sidebar() {
     return {
         '/great_book/': great_book(),
@@ -62,7 +70,7 @@ function func() {
                 { text: '07 Monad', link: '/func/07' },
                 { text: '08 Semigroup', link: '/func/08' },
                 { text: '09 推导 foldMap() 函数', link: '/func/09' },
-                { text: '10 范畴论实战', link: '/func/10' },
+                { text: '10 实战', link: '/func/10' },
             ]
         }
     ]
