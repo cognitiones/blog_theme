@@ -1,11 +1,3 @@
-<!--
- * @Author: chenzeqi chenzeqi@jiayuan.com
- * @Date: 2023-05-15 10:00:56
- * @LastEditors: chenzeqi chenzeqi@jiayuan.com
- * @LastEditTime: 2023-06-07 13:52:33
- * @FilePath: \blog_theme\packages\blog\docs\class.md
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
--->
 ---
 title: "class 类"
 tags: 
