@@ -1,0 +1,1 @@
+import{_ as e,o as t,c as o}from"./app.10a26414.js";const _=JSON.parse('{"title":"图片优化","description":"","frontmatter":{"title":"图片优化","hidden":true},"headers":[],"relativePath":"others/img-optimize.md"}'),r={name:"others/img-optimize.md"};function i(a,s,n,c,m,p){return t(),o("div")}const f=e(r,[["render",i]]);export{_ as __pageData,f as default};
