@@ -1,1 +1,0 @@
-import{_ as s,o as n,c as a,a as o}from"./app.1156ccab.js";const C=JSON.parse('{"title":"class 类","description":"","frontmatter":{"title":"class 类","tags":["class"]},"headers":[],"relativePath":"class.md"}'),l={name:"class.md"},p=o("",11),e=[p];function c(t,r,y,i,D,F){return n(),a("div",null,e)}const A=s(l,[["render",c]]);export{C as __pageData,A as default};
