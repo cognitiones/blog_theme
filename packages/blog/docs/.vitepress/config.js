@@ -16,7 +16,6 @@ const blogTheme = getThemeConfig({
 })
 
 export default defineConfig({
-    base: '/blog_theme',
     title: 'blog',
     description: '介绍',
     vite: {
