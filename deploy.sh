@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-
+# 推送代码 sh deploy.sh (git环境)
 # 确保脚本抛出遇到的错误
 set -e
 
@@ -13,5 +13,6 @@ git add -A
 git commit -m 'deploy'
 
 git push -f git@github.com:cognitiones/blog_theme.git master:gh-pages
+# git push -f git@gitee.com:mqyqingfeng/learn-typescript.git master:gh-pages
 
 cd -
