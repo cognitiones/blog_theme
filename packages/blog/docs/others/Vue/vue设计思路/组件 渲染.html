@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    // const MyComponent = function () {
+    //     return {
+    //         tag: 'div',
+    //         props: {
+    //             onClick: () => alert('hello')
+    //         },
+    //         children: 'click me'
+    //     }
+    // }
+
+    const MyComponent = {
+        render(){
+            return {
+                tag: 'div',
+                props: {
+                    onCLick: () => alert('hello')
+                },
+                children: 'click me'
+            }
+        }
+    }
+
+    const vnode = {
+        tag: MyComponent
+    }
+
+    function renderer(vnode, container){
+        if(typeof vnode.tag === 'string'){
+            mountElement(vnode, container)
+        }else if(typeof vnode.tag === 'object'){
+            mountComponent(vnode, container)
+        }
+    }
+
+    function mountElement(vnode, container){
+        const el = document.createElement(vnode.tag)
+
+        for(const key in vnode.props){
+            if(/^on/.test(key)){
+                el.addEventListener(
+                    key.substr(2).toLowerCase(),
+                    vnode.props[key]
+                )
+            }
+        }
+
+        if(typeof vnode.children === 'string'){
+            el.appendChild(document.createTextNode(vnode.children))
+        }else if(Array.isArray(vnode.children)){
+            vnode.children.forEach(child => renderer(child, el))
+        }
+
+        container.appendChild(el)
+    }
+
+    function mountComponent(vnode, container){
+        const subtree = vnode.tag.render()
+        renderer(subtree, container)
+    }
+</script>
+
+</html>
