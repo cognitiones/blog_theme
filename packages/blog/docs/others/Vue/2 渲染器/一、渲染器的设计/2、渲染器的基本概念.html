@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script src="https://unpkg.com/@vue/reactivity@3.0.5/dist/reactivity.global.js"></script>
+<script>
+    const { effect, ref } = VueReactivity
+
+    function createRenderer() {
+        function patch(n1, n2, container) {
+            // n1: 旧vnode n2: 新vnode container: 容器 
+        }
+
+        function render(vnode, container) {
+            if (vnode) {
+                //实例 运行不了
+                patch(container._vnode, vnode, container)
+
+            } else {
+                if (container._vnode) {
+                    container.innerHTML = ""
+                }
+            }
+
+            container._vnode = vnode
+        }
+
+        return { render }
+    }
+
+    const renderer = createRenderer()
+
+    renderer.render('hello', document.querySelector('#app'))
+
+    renderer.render('huanxintouliu', document.querySelector('#app'))
+
+    renderer.render(null, document.querySelector('#app'))
+</script>
+
+</html>
