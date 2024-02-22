@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script src="https://unpkg.com/@vue/reactivity@3.0.5/dist/reactivity.global.js"></script>
+<script>
+    const { effect, ref } = VueReactivity
+
+    function shouldSetAsProps(el, key, value) {
+        if (key === 'form' && el.tagName === 'INPUT') return false
+        return key in el
+    }
+
+    function createRenderer(options) {
+        const {
+            createElement,
+            insert,
+            setElementText,
+            patchProps
+        } = options
+
+        function mountElement(vnode, container) {
+            const el = vnode.el = createElement(vnode.type)
+
+            if (typeof vnode.children === 'string') {
+                setElementText(el, vnode.children)
+            } else if (Array.isArray(vnode.children)) {
+                vnode.children.forEach(child => {
+                    patch(null, child, el)
+                })
+            }
+
+            if (vnode.props) {
+                for (const key in vnode.props) {
+                    patchProps(el, key, null, vnode.props[key])
+                }
+            }
+
+            insert(el, container)
+        }
+
+        function patch(n1, n2, container) {
+            // n1: 旧vnode n2: 新vnode container: 容器 
+            if (!n1) {
+                mountElement(n2, container)
+            } else {
+
+            }
+
+        }
+
+        function unmount(vnode) {
+            const parent = el.parentNode
+            if (parent) parent.removeChild(el)
+        }
+        function render(vnode, container) {
+            if (vnode) {
+                //举例 运行不了
+                patch(container._vnode, vnode, container)
+            } else {
+                if (container._vnode) {
+                    unmount(container._vnode)
+                }
+            }
+
+            container._vnode = vnode
+        }
+
+        return { render }
+    }
+
+    function normalizeClass(classes) {
+        //考虑到 object 类型的情况 需要取值, 数组里有 object 的情况 返回字符串
+        return Array.isArray(classes) ?
+            classes.map(normalizeClass).join(' ') :
+            typeof classes === 'object' ?
+                Object.keys(classes).filter(cls => classes[cls]).join(' ') :
+                classes
+    }
+
+    const vnode = {
+        type: 'p',
+        props: {
+            class: normalizeClass([
+                'foo bar',
+                { baz: true }
+            ])
+        }
+    }
+
+    const renderer = createRenderer({
+        createElement(tag) {
+            return document.createElement(tag)
+        },
+        setElementText(el, text) {
+            el.textContent = text
+        },
+        insert(el, parent, anchor = null) {
+            parent.insertBefore(el, anchor)
+        },
+        patchProps(el, key, prevValue, nextValue) {
+            if (key === 'class') {
+                el.className = nextValue || ''
+            } else if (shouldSetAsProps(el, key, nextValue)) {
+                const type = typeof el[key]
+
+                if (type === 'boolean' && nextValue === '') {
+                    el[key] = true
+                } else {
+                    el[key] = nextValue
+                }
+            } else {
+                el.setAttribute(key, nextValue)
+            }
+        }
+    })
+
+    renderer.render(vnode, document.querySelector('#app'))
+</script>
+
+</html>
