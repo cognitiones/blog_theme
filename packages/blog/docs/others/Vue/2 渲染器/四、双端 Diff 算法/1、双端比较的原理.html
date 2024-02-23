@@ -31,7 +31,7 @@
             setComment
         } = options
 
-        function mountElement(vnode, container) {
+        function mountElement(vnode, container, anchor) {
             const el = vnode.el = createElement(vnode.type)
 
             if (typeof vnode.children === 'string') {
@@ -48,7 +48,7 @@
                 }
             }
 
-            insert(el, container)
+            insert(el, container, anchor)
         }
 
         function patchElement(n1, n2) {
@@ -81,19 +81,7 @@
 
                 setElementText(container, n2.children)
             } else if (Array.isArray(n2.children)) {
-                const oldChildren = n1.children
-                const newChildren = n2.children
-
-                for (let i = 0; i < newChildren.length; i++) {
-                    const newVNode = newChildren[i]
-                    for (let j = 0; j < oldChildren.length; j++){
-                        const oldVNode = oldChildren[j]
-                        if(newVNode.key === oldChildren.key){
-                            patch(oldVNode, newVNode, container)
-                            break
-                        }
-                    }
-                }
+                patchKeyedChildren(n1, n2, container)
             } else {
                 if (Array.isArray(n1.children)) {
                     n1.children.forEach(c => unmount(c))
@@ -103,7 +91,50 @@
             }
         }
 
-        function patch(n1, n2, container) {
+        function patchKeyedChildren(n1, n2, container) {
+            const oldChildren = n1.children
+            const newChildren = n2.children
+
+            let oldStartIdx = 0
+            let oldEndIdx = oldChildren.length - 1
+            let newStartIdx = 0
+            let newEndIdx = newChildren.length - 1
+
+            let oldStartVNode = oldChildren[oldStartIdx]
+            let oldEndVNode = oldChildren[oldEndIdx]
+            let newStartVNode = newChildren[newStartIdx]
+            let newEndVNode = newChildren[newEndIdx]
+            while (oldStartVNode.key <= newStartVNode.key) {
+                if (oldStartVNode.key === newStartVNode.key) {
+                    patch(oldStartVNode, newStartVNode, container)
+
+                    oldStartVNode = oldChildren[++oldStartIdx]
+                    newStartVNode = newChildren[++newStartIdx]
+                } else if (oldEndVNode.key === newEndVNode.key) {
+                    patch(oldEndVNode, newEndVNode, container)
+                
+                    oldEndVNode = oldChildren[--oldEndIdx]
+                    newEndVNode = newChildren[--newEndIdx]
+                } else if (oldStartVNode.key === newEndVNode.key) {
+                    patch(oldStartVNode, newEndVNode, container)
+
+                    insert(oldStartVNode.el, container, oldEndVNode.el.nextSibling)
+
+                    oldStartVNode = oldChildren[++oldStartIdx]
+                    newEndVNode = newChildren[--newEndIdx]
+                } else if (oldEndVNode.key === newStartVNode.key) {
+                    patch(oldEndVNode, newStartVNode, container)
+
+                    insert(oldEndVNode.el, container, oldStartVNode.el)
+
+                    oldEndVNode = oldChildren[--oldEndIdx]
+                    newStartVNode = newChildren[++newStartIdx]
+                }
+            }
+
+        }
+
+        function patch(n1, n2, container, anchor) {
             // n1: 旧vnode n2: 新vnode container: 容器
 
             if (n1 && n1.type !== n2.type) {
@@ -115,7 +146,7 @@
 
             if (typeof type === 'string') {
                 if (!n1) {
-                    mountElement(n2, container)
+                    mountElement(n2, container, anchor)
                 } else {
                     patchElement(n1, n2)
                 }
