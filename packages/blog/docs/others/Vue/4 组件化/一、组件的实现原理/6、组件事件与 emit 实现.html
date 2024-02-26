@@ -12,11 +12,30 @@
 </body>
 <script src="https://unpkg.com/@vue/reactivity@3.0.5/dist/reactivity.global.js"></script>
 <script>
-    const { effect, ref } = VueReactivity
+    const { effect, ref, reactive, shallowReactive, shallowReadonly } = VueReactivity
     const Fragment = Symbol()
     const Comment = Symbol()
     const Text = Symbol()
-    
+
+    const queue = new Set()
+    let isFlushing = false
+    const p = Promise.resolve()
+
+    function queueJob(job) {
+        queue.add(job)
+        if (!isFlushing) {
+            isFlushing = true
+            p.then(() => {
+                try {
+                    queue.forEach(job => job())
+                } finally {
+                    isFlushing = false
+                    queue.clear = 0
+                }
+            })
+        }
+    }
+
     function lis() {
         const p = arr.slice()
         const result = [0]
@@ -78,9 +97,140 @@
 
         function mountComponent(vnode, container, anchor) {
             const componentOptions = vnode.type
-            const { render } = componentOptions
-            const subTree = render()
-            patch(null, subTree, container, anchor)
+            const { render, data, setup, props: propsOption, beforeCreate, created, beforeMount, mounted, beforeUpdate, updated } = componentOptions
+
+            beforeCreate && beforeCreate()
+
+            const state = data ? reactive(data()) : null
+            const [props, attrs] = resolveProps(propsOption, vnode.props)
+
+            const instance = {
+                state,
+                props: shallowReactive(props),
+                isMounted: false,
+                subTree: null
+            }
+
+            function emit(event, ...payload){
+                const eventName = `on${event[0].toUpperCase() + event.slice(1)}`
+                const handler = instance.props[eventName]
+
+                if(handler){
+                    handler(...payload)
+                }else{
+                    console.error('事件不存在')
+                }
+            }
+
+            const setupContext = { attrs, emit }
+            const setupResult = setup(shallowReadonly(instance.props), setupContext)
+
+            let setupState = null
+            if (typeof setupResult === 'function') {
+                if (render) console.error('setup 函数返回渲染函数, render 选项将被忽略')
+
+                render = setupResult
+            } else {
+                setupState = setupResult
+            }
+
+            vnode.component = instance
+
+            const renderContext = new Proxy(instance, {
+                get(t, k, r) {
+                    const { state, props } = t
+                    if (state && k in state) {
+                        return state[k]
+                    } else if (k in props) {
+                        return props[k]
+                    } else if (setupState && k in setupState) {
+                        return setupState[k]
+                    } else {
+                        console.error('不存在')
+                    }
+                },
+                set(t, k, v, r) {
+                    const { state, props } = t
+                    if (state && k in state) {
+                        state[k] = v
+                    } else if (k in props) {
+                        console.warn(`Attempting to mutate prop "${k}". Props readonly`)
+                    } else if (setupState && k in setupState) {
+                        setupState[k] = v
+                    } else {
+                        console.error('不存在')
+                    }
+                }
+            })
+
+            created && created.call(renderContext)
+
+            effect(() => {
+                const subTree = render.call(state, state)
+
+                if (!instance.isMounted) {
+                    beforeMount && beforeMount.call(state)
+
+                    patch(null, subTree, container, anchor)
+                    instance.isMounted = true
+
+                    mounted && mounted.call(state)
+                } else {
+                    beforeUpdate && beforeUpdate.call(state)
+                    patch(instance.subTree, subTree, container, anchor)
+                    updated && updated.call(state)
+                }
+
+                instance.subTree = subTree
+            }, {
+                scheduler: queueJob
+            })
+
+        }
+
+        function patchComponent(n1, n2, anchor) {
+            const instance = (n2.component = n1.component)
+            const { props } = instance
+
+            if (hasPropsChanged(n1.props, n2.props)) {
+                const [nextProps] = resolveProps(n2.type.props, n2.props)
+                for (const k in nextProps) {
+                    props[k] = nextProps[k]
+                }
+
+                for (const k in props) {
+                    if (!(k in nextProps)) delete props[k]
+                }
+            }
+        }
+
+        function hasPropsChanged(prevProps, nextProps) {
+            const nextKeys = Object.keys(nextProps)
+            if (nextKeys.length !== Object.keys(prevProps).length) {
+                return true
+            }
+
+            for (let i = 0; i < nextKeys.length; i++) {
+                const key = nextKeys[i]
+                if (nextProps[key] !== prevProps[key]) return true
+            }
+
+            return false
+        }
+
+        function resolveProps(options, propsData) {
+            const props = {}
+            const attrs = {}
+
+            for (const key in propsData) {
+                if (key in options || key.startsWith('on')) {
+                    props[key] = propsData[key]
+                } else {
+                    attrs[key] = propsData[key]
+                }
+            }
+
+            return [props, attrs]
         }
 
         function mountElement(vnode, container, anchor) {
@@ -413,10 +563,13 @@
 
     const MyComponent = {
         name: 'MyComponent',
+        props: {
+            title: String
+        },
         render() {
             return {
                 type: 'div',
-                children: `我是文本内容`
+                children: `count is: ${this.title}`
             }
         }
     }

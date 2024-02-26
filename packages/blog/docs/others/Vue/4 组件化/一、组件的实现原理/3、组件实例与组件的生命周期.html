@@ -12,11 +12,30 @@
 </body>
 <script src="https://unpkg.com/@vue/reactivity@3.0.5/dist/reactivity.global.js"></script>
 <script>
-    const { effect, ref } = VueReactivity
+    const { effect, ref, reactive } = VueReactivity
     const Fragment = Symbol()
     const Comment = Symbol()
     const Text = Symbol()
-    
+
+    const queue = new Set()
+    let isFlushing = false
+    const p = Promise.resolve()
+
+    function queueJob(job) {
+        queue.add(job)
+        if (!isFlushing) {
+            isFlushing = true
+            p.then(() => {
+                try {
+                    queue.forEach(job => job())
+                } finally {
+                    isFlushing = false
+                    queue.clear = 0
+                }
+            })
+        }
+    }
+
     function lis() {
         const p = arr.slice()
         const result = [0]
@@ -78,9 +97,43 @@
 
         function mountComponent(vnode, container, anchor) {
             const componentOptions = vnode.type
-            const { render } = componentOptions
-            const subTree = render()
-            patch(null, subTree, container, anchor)
+            const { render, data, beforeCreate, created, beforeMount, mounted, beforeUpdate, updated } = componentOptions
+
+            beforeCreate && beforeCreate()
+
+            const state = reactive(data())
+
+            const instance = {
+                state,
+                isMounted: false,
+                subTree: null
+            }
+
+            vnode.component = instance
+
+            created && created.call(state)
+
+            effect(() => {
+                const subTree = render.call(state, state)
+
+                if (!instance.isMounted) {
+                    beforeMount && beforeMount.call(state)
+                    
+                    patch(null, subTree, container, anchor)
+                    instance.isMounted = true
+
+                    mounted && mounted.call(state)
+                } else {
+                    beforeUpdate && beforeUpdate.call(state)
+                    patch(instance.subTree, subTree, container, anchor)
+                    updated && updated.call(state)
+                }
+
+                instance.subTree = subTree
+            }, {
+                scheduler: queueJob
+            })
+
         }
 
         function mountElement(vnode, container, anchor) {
@@ -413,10 +466,18 @@
 
     const MyComponent = {
         name: 'MyComponent',
+        data() {
+            return {
+                foo: 'hello world'
+            }
+        },
+        created(){
+            console.log('你好');
+        },
         render() {
             return {
                 type: 'div',
-                children: `我是文本内容`
+                children: `foo 的值是：${this.foo}`
             }
         }
     }

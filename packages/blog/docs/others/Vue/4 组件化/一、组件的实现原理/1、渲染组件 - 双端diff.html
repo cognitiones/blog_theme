@@ -16,49 +16,6 @@
     const Fragment = Symbol()
     const Comment = Symbol()
     const Text = Symbol()
-    
-    function lis() {
-        const p = arr.slice()
-        const result = [0]
-        let i, j, u, v, c
-        const len = arr.length
-        for (i = 0; i < len; i++) {
-            const arrI = arr[i]
-            if (arrI !== 0)
-                j = result[result.length - 1]
-            if (arr[j] < arrI) {
-                p[i] = j
-                result.push(i)
-                continue
-            }
-            u = 0
-            v = result.length - 1
-            while (u < v) {
-                c = ((u + v) / 2) | 0
-                if (arr[result[c]] < arrI) {
-                    u = c + 1
-                } else {
-                    v = c
-                }
-            }
-
-            if (arrI < arr[result[u]]) {
-                if (u > 0) {
-                    p[i] = result[u - 1]
-                }
-                result[u] = i
-            }
-        }
-        u - result.length
-        v = result[u - 1]
-        while (u-- > 0) {
-            result[u] = v
-            v = p[v]
-        }
-
-        return result
-    }
-
     function shouldSetAsProps(el, key, value) {
         if (key === 'form' && el.tagName === 'INPUT') return false
         return key in el
@@ -147,114 +104,69 @@
             const oldChildren = n1.children
             const newChildren = n2.children
 
-            let j = 0
-            let objVNode = oldChildren[j]
-            let newVNode = newChildren[j]
+            let oldStartIdx = 0
+            let oldEndIdx = oldChildren.length - 1
+            let newStartIdx = 0
+            let newEndIdx = newChildren.length - 1
 
-            while (oldVNode.key === newVNode.key) {
-                patch(oldVNode, newVNode, container)
-                j++
-                oldVNode = oldChildren[j]
-                newVNode = newChildren[j]
-            }
+            let oldStartVNode = oldChildren[oldStartIdx]
+            let oldEndVNode = oldChildren[oldEndIdx]
+            let newStartVNode = newChildren[newStartIdx]
+            let newEndVNode = newChildren[newEndIdx]
+            while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
+                if (!oldStartVNode) {
+                    oldStartVNode = oldChildren[++oldStartIdx]
+                } else if (!oldEndVNode) {
+                    oldEndVNode = oldChildren[--oldEndIdx]
+                } else if (oldStartVNode.key === newStartVNode.key) {
+                    patch(oldStartVNode, newStartVNode, container)
 
-            let oldEnd = oldChildren.length - 1
-            let newEnd = newChildren.length - 1
+                    oldStartVNode = oldChildren[++oldStartIdx]
+                    newStartVNode = newChildren[++newStartIdx]
+                } else if (oldEndVNode.key === newEndVNode.key) {
+                    patch(oldEndVNode, newEndVNode, container)
 
-            oldVNode = oldChildren[oldEnd]
-            newVNode = newChildren[newEnd]
+                    oldEndVNode = oldChildren[--oldEndIdx]
+                    newEndVNode = newChildren[--newEndIdx]
+                } else if (oldStartVNode.key === newEndVNode.key) {
+                    patch(oldStartVNode, newEndVNode, container)
 
-            while (oldVNode.key === newVNode.key) {
-                patch(oldVNode, newVNode, container)
-                oldEnd--
-                newEnd--
-                oldVNode = oldChildren[oldEnd]
-                newVNode = newChildren[newEnd]
-            }
+                    insert(oldStartVNode.el, container, oldEndVNode.el.nextSibling)
 
-            //挂载
-            if (j > oldEnd && j <= newEnd) {
-                const anchorIndex = newEnd + 1
-                const anchor = anchorIndex < newChildren.length ? newChildren[anchorIndex].el : null
+                    oldStartVNode = oldChildren[++oldStartIdx]
+                    newEndVNode = newChildren[--newEndIdx]
+                } else if (oldEndVNode.key === newStartVNode.key) {
+                    patch(oldEndVNode, newStartVNode, container)
 
-                while (j <= newEnd) {
-                    patch(null, newChildren[j++], container, anchor)
-                }
-            } else if (j > newEnd && j <= oldEnd) {
-                while (j <= oldEnd) {
-                    unmount(oldChildren[j++])
-                }
-            } else {
-                const count = newEnd - j + 1
-                const source = new Array(count)
-                source.fill(-1)
+                    insert(oldEndVNode.el, container, oldStartVNode.el)
 
-                const oldStart = j
-                const newStart = j
+                    oldEndVNode = oldChildren[--oldEndIdx]
+                    newStartVNode = newChildren[++newStartIdx]
+                } else {
+                    const idxInOld = oldChildren.findIndex(
+                        node => node.key === newStartVNode.key
+                    )
 
-                let moved = false
-                let pos = 0
-
-                const keyIndex = {}
-
-                for (let i = newStart; i <= newEnd; i++) {
-                    keyIndex[newChildren[i].key] = i
-                }
-
-                let patched = 0
-                for (let i = oldStart; i <= oldEnd; i++) {
-                    const oldVNode = oldChildren[i]
-
-                    if (patched <= count) {
-                        const k = keyIndex[oldVNode.key]
-
-                        if (typeof k !== 'undefined') {
-                            newVNode = newChildren[k]
-                            patch(oldVNode, newVNode, container)
-                            patched++
-                            source[k - newStart] = i
-
-                            if (k < pos) {
-                                moved = true
-                            } else {
-                                pos = k
-                            }
-                        } else {
-                            unmount(oldVNode)
-                        }
+                    if (idxInOld > 0) {
+                        const vnodeToMove = oldChildren[idxInOld]
+                        patch(vnodeToMove, newStartVNode, container)
+                        insert(vnodeToMove.el, container, oldStartVNode.el)
+                        oldChildren[idxInOld] = undefined
+                        // newStartVNode = newChildren[++newStartIdx]
                     } else {
-                        unmount(oldVNode)
+                        patch(null, newStartVNode, container, oldStartVNode.el)
                     }
+                    newStartVNode = newChildren[++newStartIdx]
                 }
+            }
 
-                if (moved) {
-                    // 计算最长递增子序列 书中有介绍
-                    const seq = lis(source)
-
-                    let s = seq.length - 1
-                    let i = count - 1
-
-                    for (i; i >= 0; i--) {
-                        if (source[i] === -1) {
-                            const pos = i + newStart
-                            const newVNode = newChildren[pos]
-
-                            const nextPos = pos + 1
-
-                            const anchor = nextPos < newChildren.length ? newChildren[nextPos].el : null
-                            patch(null, newVNode, container, anchor)
-                        } else if (i !== seq[s]) {
-                            const pos = i + newStart
-                            const newVNode = newChildren[pos]
-
-                            const nextPos = pos + 1
-
-                            const anchor = nextPos < newChildren.length ? newChildren[nextPos].el : null
-                            insert(newVNode.el, container, anchor)
-                        } else {
-                            s--
-                        }
-                    }
+            if (oldEndIdx < oldStartIdx && newStartIdx <= newEndIdx) {
+                for (let i = newStartIdx; i <= newEndIdx; i++) {
+                    patch(null, newChildren[i], container, oldStartVNode.el)
+                }
+            } else if (newEndIdx < newStartIdx && oldStartIdx <= oldEndIdx) {
+                for (let i = oldStartIdx; i <= oldEndIdx; i++) {
+                    unmount(oldChildren[i])
                 }
             }
         }
