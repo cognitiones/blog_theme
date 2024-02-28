@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    function MyFuncComp(props) {
+        return { type: 'h1', children: props.title }
+    }
+
+    MyFuncComp.props = {
+        title: String
+    }
+
+    function patch(n1, n2, container, anchor) {
+        // n1: 旧vnode n2: 新vnode container: 容器
+
+        if (n1 && n1.type !== n2.type) {
+            unmount(n1)
+            n1 = null
+        }
+
+        const { type } = n2
+
+        if (typeof type === 'string') {
+            if (!n1) {
+                mountElement(n2, container, anchor)
+            } else {
+                patchElement(n1, n2)
+            }
+        } else if (type === Text) {
+            if (!n1) {
+                const el = n2.el = createText(n2.children)
+                insert(el, container)
+            } else {
+                const el = n2.el = n1.el
+                if (n2.children !== n1.children) {
+                    setText(el, n2.children)
+                }
+            }
+        } else if (type === Comment) {
+            if (!n1) {
+                const el = n2.el = createComment(n2.children)
+                insert(el, container)
+            } else {
+                const el = n2.el = n1.el
+                if (n2.children !== n1.children) {
+                    setComment(el, n2.children)
+                }
+            }
+        } else if (type === Fragment) {
+            if (!n1) {
+                n2.children.forEach(c => patch(null, c, container))
+            } else {
+                patchChildren(n1, n2, container)
+            }
+        } else if (typeof type === 'object' || typeof type === 'function') {
+            //组件
+            if (!n1) {
+                mountComponent(n2, container, anchor)
+            } else {
+                patchComponent(n1, n2, anchor)
+            }
+        } else if (type === 'xxx') {
+
+        }
+    }
+
+    function mountComponent(vnode, container, anchor) {
+        const isFunctional = typeof vnode.type === 'function'
+
+        const componentOptions = vnode.type
+        if(isFunctional){
+            componentOptions = {
+                render: vnode.type,
+                props: vnode.type.props
+            }
+        }
+        const { render } = componentOptions
+        const subTree = render()
+        patch(null, subTree, container, anchor)
+    }
+</script>
+
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    const el = document.createElement('div')
+    el.classList.add('box')
+    el.classList.add('enter-from')
+    el.classList.add('enter-active')
+
+    document.body.appendChild(el)
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            el.classList.remove('enter-from')
+            el.classList.add('enter-to')
+
+            el.addEventListener('transitionend', () => {
+                el.classList.remove('enter-to')
+                el.classList.remove('enter-active')
+            })
+        })
+    })
+
+    el.addEventListener('click', () => {
+        const performRemove = () => el.parentNode.removeChild(el)
+        el.classList.add('leave-from')
+        el.classList.add('leave-active')
+
+        document.body.offsetHeight
+
+        requestAnimationFrame(()=>{
+            requestAnimationFrame(()=>{
+                requestAnimationFrame(()=>{
+                    el.classList.remove('leave-from')
+                    el.classList.remove('leave-to')
+
+                    el.addEventListener('transitionend', ()=>{
+                        el.classList.remove('leave-to')
+                        el.classList.remove('leave-active')
+
+                        performRemove()
+                    })
+                })
+            })
+        })
+    })
+</script>
+
+</html>

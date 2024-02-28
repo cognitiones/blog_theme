@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    export default {
+        components: {
+            AsyncComp: defineAsyncComponent(()=> import('compA'))
+        }
+    }
+</script>
+<script>
+    const Text = Symbol()
+    function defineAsyncComponent(loader) {
+        let InnerComp = null
+        return {
+            name: 'AsyncComponentWrapper',
+            setup() {
+                const loaded = ref(false)
+
+                loader().then(c => {
+                    InnerComp = c
+                    loaded.value = true
+                })
+
+                return () => {
+                    return loaded.value ? { type: InnerComp } : { type: Text, children: '' }
+                }
+            }
+        }
+    }
+</script>
+
+</html>
