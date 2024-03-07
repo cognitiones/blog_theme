@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    const TextModes = {
+        DATA: 'DATA',
+        RCDATA: 'RCDATA',
+        RAWTEXT: 'RAWTEXT',
+        CDATA: 'CDATA'
+    }
+
+    function parse(str) {
+        const context = {
+            source: str,
+            mode: TextModes.DATA
+        }
+        const nodes = parseChildren(context, [])
+
+        return {
+            type: 'Root',
+            children: nodes
+        }
+    }
+
+    function parseChildren(context, ancestors) {
+        let nodes = []
+        const { mode, source } = context
+        while (!isEnd(context, ancestors)) {
+            let node
+            if (mode === TextModes.DATA || mode === TextModes.RCDATA) {
+                if (mode === TextModes.DATA && source[0] === '<') {
+                    if (source[1] === '!') {
+                        if (source.startsWith('<!--')){
+                            // 注释
+                            node = parseComment(context)
+                        } else if (source.startsWith('<![CDATA[')) {
+                            // CDATA
+                            node = parseCDATA(context, ancestors)
+                        }
+                    } else if (source[1] === '/') {
+                        // 结束标签
+                    } else if (/[a-z]/i.test(source[1])) {
+                        node = parseElement(context, ancestors)
+                    }
+                }
+            }
+
+            if (!node) {
+                node = parseText(context)
+            }
+
+            nodes.push(node)
+        }
+
+        return nodes
+    }
+
+    const template = `<div>
+        <p>Text1</p>
+        <p>Text2</p>
+    </div>`
+
+    function parseElement(context, ancestors){
+        const element = parseTag(context)
+        element.children = parseChildren(context, ancestors)
+
+        parseEndTag(context, 'end')
+
+        return element
+    }
+
+
+</script>
+
+</html>
