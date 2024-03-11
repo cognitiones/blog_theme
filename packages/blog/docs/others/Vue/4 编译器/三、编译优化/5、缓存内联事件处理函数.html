@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <Comp @change="a + b" />
+</body>
+<script>
+    function render(ctx) {
+        return h(Comp, {
+            onChange: ($event) => { ctx.a + ctx.b }
+        })
+    }
+
+    function render2(ctx, cache) {
+        return h(Comp, {
+            onChange: cache[0] || (cache[0] = ($event) => (ctx.a + ctx.b))
+        })
+    }
+</script>
+
+</html>

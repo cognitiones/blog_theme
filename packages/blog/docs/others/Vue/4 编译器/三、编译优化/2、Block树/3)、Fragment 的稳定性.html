@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <p v-for="item in list">{{item}}</p>
+</body>
+<script>
+    const prevBlock = {
+        tag: Fragment,
+        dynamicChildren: [
+            { tag: 'p', children: item },
+            { tag: 'p', children: item },
+        ]
+    }
+
+    const prevBlock2 = {
+        tag: Fragment,
+        dynamicChildren: [
+            { tag: 'p', children: item }
+        ]
+    } 
+</script>
+
+</html>

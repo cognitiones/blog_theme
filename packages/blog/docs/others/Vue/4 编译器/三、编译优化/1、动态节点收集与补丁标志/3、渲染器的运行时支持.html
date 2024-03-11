@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="foo">
+        <p class="bar">{{text}}</p>
+    </div>
+</body>
+<script>
+    // function patchElement(n1, n2) {
+    //     const el = n2.el = n1.el
+    //     const oldProps = n1.props
+    //     const newProps = n2.props
+
+    //     if (n2.dynamicChildren) {
+    //         patchBlockChildren(n1, n2)
+    //     } else {
+    //         patchChildren(n1, n2, el)
+    //     }
+    // }
+
+    // function patchBlockChildren(n1, n2){
+    //     for(let i = 0; i < n2.dynamicChildren.length; i++){
+    //         patchElement(n1.dynamicChildren[i], n2.dynamicChildren[i])
+    //     }
+    // }
+
+    function patchElement(n1, n2){
+        const el = n2.el = n1.el
+        const oldProps = n1.props
+        const newProps = n2.props
+
+        if(n2.PatchFlags){
+            if(n2.PatchFlags === 1){
+
+            }else if(n2.PatchFlags === 2){
+
+            }//...
+        }else {
+            for(const key in newProps){
+                if(newProps[key] !== oldProps[key]){
+                    patchProps(el, key, oldProps[key], newProps[key])
+                }
+            }
+            for(const key in oldProps){
+                if(!(key in newProps)){
+                    patchProps(el, key, oldProps[key], null)
+                }
+            }
+        }
+
+        patchChildren(n1, n2, el)
+    }
+</script>
+
+</html>

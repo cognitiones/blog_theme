@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <p>static text</p>
+        <p>{{ title }}</p>
+    </div>
+
+    <div>
+        <p foo="bar" a=b>{{text}}</p>
+    </div>
+</body>
+<script>
+    function render() {
+        return (openBlock(), createBlock('div', null, [
+            createVNode('p', null, 'static text'),
+            createVNode('p', null, ctx.title)
+        ]))
+    }
+
+    const hoist1 = createVNode('p', null, 'text')
+
+    function render2() {
+        return (openBlock(), createBlock('div', null, [
+            hoist1,
+            createVNode('p', null, ctx.title)
+        ]))
+    }
+
+    const hoistProp = { foo: 'bar', a: 'b' }
+    function render3(ctx) {
+        return (openBlock(), createBlock('div', null, [
+            createVNode('p', hoistProp, ctx.text)
+        ]))
+    }
+</script>
+
+</html>

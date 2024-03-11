@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    //传统虚拟DOM
+    const vnode = {
+        tag: 'div',
+        children: [
+            { tag: 'div', children: 'foo' },
+            { tag: 'p', children: ctx.bar }
+        ]
+    }
+
+    //编译优化后
+    const vnode2 = {
+        tag: 'div',
+        children: [
+            { tag: 'div', children: 'foo' },
+            { tag: 'p', children: ctx.bar, patchFlag: 1 }
+        ]
+    }
+
+    //补丁标志
+    const PatchFlags = {
+        TEXT: 1,
+        CLASS: 2,
+        STYLE: 3
+        // ...
+    }
+
+    //提取动态节点
+    const vnode3 = {
+        tag: 'div',
+        children: [
+            { tag: 'div', children: 'foo' },
+            { tag: 'p', children: ctx.bar, patchFlag: PatchFlags.TEXT }
+        ],
+        dynamicChildren: [
+            { tag: 'p', children: ctx.bar, patchFlag: PatchFlags.TEXT }
+        ]
+    }
+
+    //提取动态节点 - 带有子节点
+    const vnode4 = {
+        tag: 'div',
+        children: [
+            {
+                tag: 'div',
+                children: [
+                    { tag: 'p', children: ctx.bar, patchFlag: PatchFlags.TEXT }
+                ]
+            }
+        ],
+        dynamicChildren: [
+            { tag: 'p', children: ctx.bar, patchFlag: PatchFlags.TEXT }
+        ]
+    }
+</script>
+
+</html>

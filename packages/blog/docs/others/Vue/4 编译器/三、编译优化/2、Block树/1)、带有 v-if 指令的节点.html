@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <section v-if="foo">
+            <p>{{ a }}</p>
+        </section>
+        <section v-else>
+            <div>
+                <p>{{ a }}</p>
+            </div>
+        </section>
+    </div>
+</body>
+<script>
+    // const block = {
+    //     tag: 'div',
+    //     dynamicChildren: [
+    //         { tag: 'p', children: ctx.a, patchFlags: 1 }
+    //     ]
+    // }
+
+    const block = {
+        tag: 'div',
+        dynamicChildren: [
+            {
+                tag: 'section',
+                key: 0,
+                dynamicChildren: []
+            }
+        ]
+    }
+</script>
+
+</html>

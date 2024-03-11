@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="foo">
+        <p class="bar">{{text}}</p>
+    </div>
+</body>
+<script>
+    const PatchFlags = {
+        TEXT: 1,
+        CLASS: 2,
+        STYLE: 3
+        // ...
+    }
+
+    const dynamicChildrenStack = []
+    let currentDynamicChildren = null
+
+    function createVNode(tag, props, children, flags) {
+        const key = props && props.key
+        props && delete props.key
+
+        const vnode = {
+            tag,
+            props,
+            children,
+            key,
+            PatchFlags: flags
+        }
+
+        if (typeof flags !== 'undefined' && currentDynamicChildren) {
+            currentDynamicChildren.push(vnode)
+        }
+
+        return vnode
+    }
+
+    function render() {
+        return (openBlock(), createBlock('div', null, [
+            createVNode('p', { class: 'foo' }, null, 1),
+            createVNode('p', { class: 'bar' }, null)
+        ]))
+    }
+
+    function openBlock() {
+        dynamicChildrenStack.push((currentDynamicChildren = []))
+    }
+
+    function createBlock(tag, props, children) {
+        const block = createVNode(tag, props, children)
+        block.dynamicChildren = currentDynamicChildren
+
+        closeBlock()
+        return block
+    }
+
+    function closeBlock() {
+        currentDynamicChildren = dynamicChildrenStack.pop()
+    }
+</script>
+
+</html>

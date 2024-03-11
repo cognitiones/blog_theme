@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <p></p>
+        <p></p>
+        <!-- ... 20 个 p 标签 -->
+        <p></p>
+    </div>
+</body>
+<script>
+    const hoist1 = createVNode('p', null, null, PatchFlags.HOISTED)
+    const hoist2 = createVNode('p', null, null, PatchFlags.HOISTED)
+    // ... 20 个 hoistx 变量
+    const hoist20 = createVNode('p', null, null, PatchFlags.HOISTED)
+
+    function render(){
+        return (openBlock(), createBlock('div', null, [
+            hoist1, hoist2, /* */, hoist20
+        ]))
+    }
+
+    //预字符串化
+    const hoistStatic = createStaticVNode('<p></p><p></p>...20个<p></p>')
+    function render2(){
+        return (openBlock(), createBlock('div', null, [
+            hoistStatic
+        ]))
+    }
+</script>
+
+</html>
