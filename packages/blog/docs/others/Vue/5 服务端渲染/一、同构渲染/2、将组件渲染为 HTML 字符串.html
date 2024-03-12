@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    const MyComponent = {
+        setup() {
+            return () => {
+                return {
+                    type: 'div',
+                    children: 'hello'
+                }
+            }
+        }
+    }
+
+    const CompVNode = {
+        type: MyComponent
+    }
+
+    const html = renderComponentVNode(CompVNode)
+    console.log(html);
+
+    function renderComponentVNode(vnode) {
+        let { type: { setup } } = vnode
+
+        const render = setup()
+
+        const subTree = render()
+
+        return renderVNode(subTree)
+    }
+
+    function renderVNode(vnode) {
+        const type = typeof vnode.type
+        if (type === 'string') {
+            return renderElementVNode(vnode)
+        } else if (type === 'object' || type === 'function') {
+            return renderComponentVNode(vnode)
+        } else if (vnode.type === Text) {
+
+        } else if (vnode.type === Fragment) {
+
+        } else {
+
+        }
+    }
+
+    function renderComponentVNode(vnode) {
+        const isFunctional = typeof vnode.type === 'function'
+        let componentOptions = vnode.type
+        if (isFunctional) {
+            componentOptions = {
+                render: vnode.type,
+                props: vnode.type.props
+            }
+        }
+
+        let { render, data, setup, beforeCreate, created, props: propsOption } = componentOptions
+        beforeCreate && beforeCreate()
+
+        const state = data ? data() : null
+        const [props, attrs] = resolveProps(propsOption, vnode.props)
+
+        const slots = vnode.children || {}
+
+        const instance = {
+            state,
+            props,
+            isMounted: false,
+            subTree: null,
+            slots,
+            mounted: [],
+            keepAliveCtx: null
+        }
+
+        function emit(event, ...payload) {
+            const eventName = `on${event[0].toUpperCase() + event.slice(1)}`
+
+            const handler = instance.props[eventName]
+            if (handler) {
+                handler(...payload)
+            } else {
+                console.error('事件不存在')
+            }
+        }
+
+        let setupState = null
+        if (setup) {
+            const setupContext = { attrs, emit, slots }
+            const prevInstance = setCurrentInstance(instance)
+            const setupResult = setup(shallowReadonly(instance.props), setupContext)
+            setCurrentInstance(prevInstance)
+
+            if (typeof setupResult === 'function') {
+                if (render) console.error('setup 函数返回渲染函数, render 选项将被忽略')
+                render = setupResult
+            } else {
+                setupState = setupContext
+            }
+        }
+
+        vnode.component = instance
+
+        const renderContext = new Proxy(instance, {
+            get(t, k, r) {
+                const { state, props, slots } = t
+                if (k === '$slots') return slots
+                if (state && k in state) {
+                    return state[k]
+                } else if (k in props) {
+                    return props[k]
+                } else if (setupState && k in setupState) {
+                    return setupState[k]
+                } else {
+                    console.error('不存在')
+                }
+            },
+            set(t, k, v, r) {
+                const { state, props } = t
+                if (state && k in state) {
+                    state[k] = v
+                } else if (k in props) {
+                    props[k] = v
+                } else if (setupState && k in setupState) {
+                    setupState[k] = v
+                } else {
+                    console.error('不存在')
+                }
+            }
+        })
+
+        created && created.call(renderContext)
+
+        const subTree = render.call(renderContext, renderContext)
+        
+        return renderVNode(subTree)
+    }
+</script>
+
+</html>

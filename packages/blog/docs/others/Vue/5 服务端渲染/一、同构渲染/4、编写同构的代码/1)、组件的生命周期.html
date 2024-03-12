@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    //客户端没问题 服务端会内存泄漏
+    // export default {
+    //     created() {
+    //         this.timer = setInterval(() => {
+
+    //         }, 1000)
+    //     },
+    //     beforeUnmount(){
+    //         clearInterval(this.timer)
+    //     }
+    // }
+
+    //使用环境变量包裹 使其不在服务端运行
+    export default {
+        created(){
+            if(!import.meta.env.SSR){
+                this.timer = setInterval(()=>{
+
+                }, 1000)
+            }
+        },
+        beforeUnmount(){
+            clearInterval(this.timer)
+        }
+    }
+</script>
+
+</html>

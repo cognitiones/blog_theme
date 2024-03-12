@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    import { createSSRApp } from 'vue'
+    import { renderToString } from '@vue/server-renderer'
+    import App from 'App.vue'
+
+    async function render(url, manifest){
+        const app = createSSRApp(App)
+
+        const ctx = {}
+        const html = await renderToString(app, ctx)
+
+        return html
+    }
+</script>
+</html>
